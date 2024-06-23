@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "CoordinateReader";
+
+service Reader {
+	rpc ReadCoordinates (ReadPath) returns (Coordinate);
+}
+
+message ReadPath {
+	string file_path = 1;
+	string id = 2;
+}
+
+message Coordinate {
+	string id = 1;
+	uint32 index = 2;
+	double x = 3;
+	double y = 4;
+	double z = 5;
+	double rx = 6;
+	double ry = 7;
+	double rz = 8;
+}
