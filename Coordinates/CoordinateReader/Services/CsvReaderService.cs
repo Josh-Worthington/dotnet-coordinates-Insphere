@@ -8,8 +8,8 @@ namespace CoordinateReader.Services;
 /// 	A service for reading the run CSV information.
 /// </summary>
 /// <seealso cref="ICsvReaderService"/>
-public class CsvReaderService(
-	ILogger<CsvReaderService> logger) : ICsvReaderService
+public sealed class CsvReaderService(
+	ILogger<CsvReaderService> logger) : ICsvReaderService, IDisposable
 {
 	// Set a default map in the case of no headers
 	private readonly Dictionary<string, int> _headerMap = new(8)
@@ -25,45 +25,54 @@ public class CsvReaderService(
 	};
 	private const char Separator = ',';
 
+	private bool _initialised;
+	private StreamReader? _reader;
+
+	/// <inheritdoc/>
+	public bool Completed { get; private set; }
+
+	/// <inheritdoc/>
+	public void Initialise(
+		string csvFilePath,
+		bool hasHeaders)
+	{
+		if (_initialised) return;
+
+		_reader = new StreamReader(File.OpenRead(csvFilePath));
+
+		if (!hasHeaders) return;
+
+		if (_reader.ReadLine() is not { } headers)
+		{
+			logger.LogWarning("Expected headers but CSV was empty.");
+			return;
+		}
+		ReadHeader(headers);
+
+		_initialised = true;
+	}
 
 	/// <inheritdoc/>
 	public IResult<Coordinate> ReadPath(
-		string csvFilePath,
-		string pathId,
-		bool hasHeader = true)
+		string pathId)
 	{
-		try
+		if (!_initialised || _reader is null)
 		{
-			using var csv = File.OpenRead(csvFilePath);
-			using var reader = new StreamReader(csv);
-			string? line;
-
-			if (hasHeader)
-			{
-				line = reader.ReadLine();
-				if (line is null)
-				{
-					throw new Exception("Failed to read line");
-				}
-				ReadHeader(line);
-			}
-
-			line = reader.ReadLine();
-			if (line is null)
-			{
-				throw new Exception("Failed to read line");
-			}
-			var result = ReadCoordinate(line);
-
-			return Result.FromSuccess(result);
-		}
-		catch (Exception ex)
-		{
-			logger.LogError(ex, "Failed to read path.");
-			return Result.FromFailure<Coordinate>(ex.Message);
+			throw new Exception("Service has not been initialised.");
 		}
 
+		if (_reader.ReadLine() is not { } line)
+		{
+			Completed = true;
+			return Result.FromFailure<Coordinate>("Reached the end of the stream.");
+		}
+
+		var result = ReadCoordinate(line);
+		return Result.FromSuccess(result);
 	}
+
+	/// <inheritdoc/>
+	public void Dispose() => _reader?.Dispose();
 
 	private void ReadHeader(
 		string headerLine)

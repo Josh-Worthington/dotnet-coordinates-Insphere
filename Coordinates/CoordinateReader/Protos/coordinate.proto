@@ -3,7 +3,7 @@ syntax = "proto3";
 option csharp_namespace = "CoordinateReader";
 
 service Reader {
-	rpc ReadCoordinates (ReadPath) returns (Coordinate);
+	rpc ReadCoordinates (ReadPath) returns (stream Coordinate);
 }
 
 message ReadPath {

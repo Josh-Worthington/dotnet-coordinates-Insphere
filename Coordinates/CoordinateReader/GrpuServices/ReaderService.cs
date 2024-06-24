@@ -16,16 +16,33 @@ public class ReaderService(
 	/// </summary>
 	/// <param name="request">The read path request.</param>
 	/// <param name="context">The server call context.</param>
-	/// <returns></returns>
-	public override Task<Coordinate> ReadCoordinates(ReadPath request, ServerCallContext context)
+	public override async Task ReadCoordinates(
+		ReadPath request,
+		IServerStreamWriter<Coordinate> coordinates,
+		ServerCallContext context)
 	{
 		logger.LogInformation("Reading path {Id}", request.Id);
-		var result = csvReaderService.ReadPath(request.FilePath, request.Id, true);
-		if (!result.IsSuccess)
-		{
-			throw new RpcException(new Status(StatusCode.FailedPrecondition, result.ErrorString));
-		}
+		csvReaderService.Initialise(request.FilePath, true);
 
-		return Task.FromResult(result.Value);
+		while (!csvReaderService.Completed)
+		{
+			var result = csvReaderService.ReadPath(request.Id);
+			if (result.IsSuccess)
+			{
+				await coordinates.WriteAsync(result.Value);
+			}
+			else
+			{
+				if (csvReaderService.Completed)
+				{
+					logger.LogInformation("Finished reading CSV {Name}", Path.GetFileName(request.FilePath));
+				}
+				else
+				{
+					logger.LogError("Failed to read path from CSV, message: {Message}", result.ErrorString);
+					break;
+				}
+			}
+		}
 	}
 }

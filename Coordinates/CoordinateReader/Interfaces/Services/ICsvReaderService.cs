@@ -5,13 +5,23 @@ namespace CoordinateReader.Interfaces.Services;
 public interface ICsvReaderService
 {
 	/// <summary>
-	/// 	Reads a path from CSV at given filepath.
+	/// 	Gets a value indicating whether the read has completed.
 	/// </summary>
-	/// <param name="csvFilePath">	Full pathname of the CSV file to read. </param>
-	/// <param name="pathId">	  	Identifier for the path to read. </param>
-	/// <param name="hasHeader">  	True if csv has header, false if not. </param>
-	IResult<Coordinate> ReadPath(
+	bool Completed { get; }
+
+	/// <summary>
+	/// 	Initialises the CSV reader service for the CSV at the given filepath.
+	/// </summary>
+	/// <param name="csvFilePath">	Full pathname of the CSV file. </param>
+	/// <param name="hasHeaders">  	True if the CSV has headers, false if not. </param>
+	void Initialise(
 		string csvFilePath,
-		string pathId,
-		bool hasHeader);
+		bool hasHeaders);
+
+	/// <summary>
+	/// 	Reads the header from the CSV.
+	/// </summary>
+	/// <param name="pathId">	  	Identifier for the path to read. </param>
+	IResult<Coordinate> ReadPath(
+		string pathId);
 }
