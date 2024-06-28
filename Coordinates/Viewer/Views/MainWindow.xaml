@@ -1,0 +1,135 @@
+﻿<Window x:Class="Viewer.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:Viewer.ViewModels"
+        d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel, IsDesignTimeCreatable=True}"
+        mc:Ignorable="d"
+        Background="Violet"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="BlueViolet"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Container"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="0"
+                                CornerRadius="20"
+                                Cursor="Hand">
+                            <TextBlock
+                                Margin="16 12"
+                                Foreground="White"
+                                Text="{TemplateBinding Content}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="DimGray"/>
+                                <Setter TargetName="Container" Property="Cursor" Value="No"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="16 12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <TextBlock
+                Text="Select file to retrieve coordinates from:"
+                FontSize="16"/>
+
+            <Grid Margin="0 16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Display selected file path -->
+                <TextBox
+                    Grid.Column="0"
+                    Cursor="No"
+                    IsReadOnly="True"
+                    Height="32"
+                    VerticalAlignment="Center"
+                    Text="{Binding FilePath, Mode=OneWay}"
+                    TextBlock.FontSize="12"/>
+
+                <!-- File select button -->
+                <Button Grid.Column="1"
+                        Margin="8 0 0 0"
+                        Content="Select"
+                        Command="{Binding SelectFileCommand, Mode=OneTime}"/>
+            </Grid>
+            
+            <!-- Retrieve the coordinates -->
+            <Button
+                HorizontalAlignment="Right"
+                Content="Retrieve Coordinates"
+                Command="{Binding RetrieveCoordinatesCommand, Mode=OneTime}"/>
+        </StackPanel>
+        <TabControl Grid.Row="1">
+            <TabItem Header="Table">
+                <TabItem.Content>
+                    <DataGrid
+                        RowBackground="AliceBlue"
+                        AlternatingRowBackground="LightBlue"
+                        ItemsSource="{Binding Coordinates}"/>
+                </TabItem.Content>
+            </TabItem>
+            <TabItem Header="Model">
+                <TabItem.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- 3D Model Viewport -->
+                        <Viewport3D Grid.Row="0">
+                            <Viewport3D.Camera>
+                                <PerspectiveCamera Position="0,0,0" LookDirection="-297.784226,13.51831762,498.2112153" FieldOfView="60" />
+                            </Viewport3D.Camera>
+                            <Viewport3D.Children>
+                                <ModelVisual3D>
+                                    <ModelVisual3D.Content>
+                                        <DirectionalLight Color="#FFFFFF" Direction="-0.612372,-0.5,-0.612372" />
+                                    </ModelVisual3D.Content>
+                                </ModelVisual3D>
+                                <ModelVisual3D>
+                                    <ModelVisual3D.Content>
+                                        <GeometryModel3D Geometry="{Binding Geometry}">
+                                            <GeometryModel3D.Material>
+                                                <MaterialGroup>
+                                                    <DiffuseMaterial>
+                                                        <DiffuseMaterial.Brush>
+                                                            <SolidColorBrush Color="Violet"/>
+                                                        </DiffuseMaterial.Brush>
+                                                    </DiffuseMaterial>
+                                                </MaterialGroup>
+                                            </GeometryModel3D.Material>
+                                        </GeometryModel3D>
+                                    </ModelVisual3D.Content>
+                                </ModelVisual3D>
+                            </Viewport3D.Children>
+                        </Viewport3D>
+
+                        <!-- Render button -->
+                        <Button Grid.Row="1"
+                                HorizontalAlignment="Right"
+                                Content="Render"
+                                Command="{Binding DrawSpheresCommand}"/>
+                    </Grid>
+                </TabItem.Content>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
