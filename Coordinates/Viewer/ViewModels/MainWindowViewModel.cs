@@ -63,8 +63,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 		{
 			IsSuccessful = (await _coordinateReaderService.GetCoordinatesAsync(FilePath!))
 				.BiMap(
-					map: coordinates => new ReadOnlyObservableCollection<Coordinate>(new ObservableCollection<Coordinate>(coordinates)),
-					mapLeft: ex => ex.Status)
+					coordinates => new ReadOnlyObservableCollection<Coordinate>(new ObservableCollection<Coordinate>(coordinates)),
+					ex => ex.Status)
 				.Match(
 					coordinates =>
 					{

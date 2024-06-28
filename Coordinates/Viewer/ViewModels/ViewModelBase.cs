@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace Viewer.ViewModels;
 
 /// <summary>
-/// 	The view model base, implements INotifyPropertyChanged.
+/// 	The view model base, implements INotifyPropertyChanged to notify the view of updates to properties.
 /// </summary>
 /// <seealso cref="INotifyPropertyChanged"/>
 public abstract class ViewModelBase(
