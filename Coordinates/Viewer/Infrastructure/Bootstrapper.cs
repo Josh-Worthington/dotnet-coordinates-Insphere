@@ -53,12 +53,16 @@ public sealed class Bootstrapper : IAsyncDisposable
 		// Clients
 		builder.Services.AddGrpcClient<Reader.ReaderClient>(o => o.Address = new Uri("https://localhost:7039"));
 
+		// Repositories
+		builder.Services.AddSingleton<ICoordinateRepository, CoordinateRepositorySingleton>();
+
 		// Services
 		builder.Services.AddScoped<ICoordinateReaderService, CoordinateReaderService>();
 		builder.Services.AddScoped<ISphereDrawingService, SphereDrawingService>();
 
 		// View models
 		builder.Services.AddScoped<IMainWindowViewModel, MainWindowViewModel>();
+		builder.Services.AddScoped<IDisplay3DViewModel, Display3DViewModel>();
 
 		// Main window
 		builder.Services.AddSingleton<MainWindow>();

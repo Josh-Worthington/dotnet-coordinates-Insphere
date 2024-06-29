@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media.Media3D;
-using CoordinateReader;
+using Viewer.Common;
 
 namespace Viewer.Interfaces.Services;
 
@@ -11,9 +11,10 @@ public interface ISphereDrawingService
 	/// <summary>
 	/// 	Draw spheres at coordinates onto the mesh.
 	/// </summary>
-	/// <param name="geometry">   	The geometry. </param>
-	/// <param name="coordinates">	The coordinates. </param>
-	void DrawSpheresAtCoordinates(
-		MeshGeometry3D geometry,
-		IReadOnlyCollection<Coordinate> coordinates);
+	/// <param name="collection">	The collection. </param>
+	/// <returns>
+	/// 	Either the centre point of the spheres, or an Exception;
+	/// </returns>
+	Either<Exception, Point3D> DrawSpheres(
+		Point3DCollection collection);
 }

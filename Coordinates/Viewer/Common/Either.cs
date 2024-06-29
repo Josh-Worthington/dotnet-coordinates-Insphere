@@ -15,6 +15,30 @@
 public abstract record Either<TLeft, TRight>
 {
 	/// <summary>
+	/// 	Matches an Either to a value, depending on.
+	/// </summary>
+	/// <typeparam name="TResult">	Result type. </typeparam>
+	/// <param name="right">	The function that selects a value if in the Right state. </param>
+	/// <param name="left"> 	The function that selects a value if in the Left state. </param>
+	/// <returns>
+	/// 	A Either with Right mapped to a new type.
+	/// </returns>
+	public abstract TResult Match<TResult>(
+		Func<TRight, TResult> right,
+		Func<TLeft, TResult> left);
+
+	/// <summary>
+	/// 	Map an Either's Right value to a new type, depending on what state it is in.
+	/// </summary>
+	/// <typeparam name="TRightOut">	The type to map Right to. </typeparam>
+	/// <param name="map">	The function that maps the Right value. </param>
+	/// <returns>
+	/// 	A Either with Right mapped to a new type.
+	/// </returns>
+	public abstract Either<TLeft, TRightOut> Map<TRightOut>(
+		Func<TRight, TRightOut> map);
+
+	/// <summary>
 	/// 	Maps an Either's Left or Right value, depending on what state it is in.
 	/// </summary>
 	/// <typeparam name="TLeftOut"> 	The type to map Left to. </typeparam>
@@ -29,28 +53,13 @@ public abstract record Either<TLeft, TRight>
 		Func<TLeft, TLeftOut> mapLeft);
 
 	/// <summary>
-	/// 	Map an Either's Right value to a new type, depending on what state it is in.
+	/// 	Performs corresponding action depending on the state of the Either.
 	/// </summary>
-	/// <typeparam name="TRightOut">	The type to map Right to. </typeparam>
-	/// <param name="map">	The function that maps the Right value. </param>
-	/// <returns>
-	/// 	A Either with Right mapped to a new type.
-	/// </returns>
-	public abstract Either<TLeft, TRightOut> Map<TRightOut>(
-		Func<TRight, TRightOut> map);
-
-	/// <summary>
-	/// 	Matches an Either to a value, depending on.
-	/// </summary>
-	/// <typeparam name="TResult">	Result type. </typeparam>
-	/// <param name="right">	The function that selects a value if in the Right state. </param>
-	/// <param name="left"> 	The function that selects a value if in the Left state. </param>
-	/// <returns>
-	/// 	A Either with Right mapped to a new type.
-	/// </returns>
-	public abstract TResult Match<TResult>(
-		Func<TRight, TResult> right,
-		Func<TLeft, TResult> left);
+	/// <param name="right">	The right action. </param>
+	/// <param name="left"> 	The left action. </param>
+	public abstract void BiIter(
+		Action<TRight> right,
+		Action<TLeft> left);
 
 	/// <summary>
 	/// 	Implicitly creates an either from the given left value.
@@ -85,6 +94,10 @@ public abstract record Either<TLeft, TRight>
 		public override Either<TLeftOut, TRightOut> BiMap<TLeftOut, TRightOut>(
 			Func<TRight, TRightOut> map,
 			Func<TLeft, TLeftOut> mapLeft) => mapLeft(Value);
+
+		public override void BiIter(
+			Action<TRight> right,
+			Action<TLeft> left) => left(Value);
 	}
 
 	/// <summary>
@@ -106,6 +119,10 @@ public abstract record Either<TLeft, TRight>
 		public override Either<TLeftOut, TRightOut> BiMap<TLeftOut, TRightOut>(
 			Func<TRight, TRightOut> map,
 			Func<TLeft, TLeftOut> mapLeft) => map(Value);
+
+		public override void BiIter(
+			Action<TRight> right,
+			Action<TLeft> left) => right(Value);
 	}
 }
 

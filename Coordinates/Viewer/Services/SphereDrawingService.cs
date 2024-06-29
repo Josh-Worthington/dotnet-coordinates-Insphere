@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using CoordinateReader;
+using Viewer.Common;
 using Viewer.Interfaces.Services;
 
 namespace Viewer.Services;
@@ -10,7 +11,8 @@ namespace Viewer.Services;
 /// 	A service for drawing spheres onto <see cref="MeshGeometry3D"/>.
 /// </summary>
 /// <seealso cref="ISphereDrawingService"/>
-public class SphereDrawingService : ISphereDrawingService
+public class SphereDrawingService(
+	ICoordinateRepository coordinateRepository) : ISphereDrawingService
 {
 	// A dictionary to hold points for fast lookup.
 	private readonly Dictionary<Point3D, int> _pointDictionary = new();
@@ -23,24 +25,32 @@ public class SphereDrawingService : ISphereDrawingService
 	private double _textureZScale;
 
 	/// <inheritdoc/>
-	public void DrawSpheresAtCoordinates(
-		MeshGeometry3D geometry,
-		IReadOnlyCollection<Coordinate> coordinates)
+	public Either<Exception, Point3D> DrawSpheres(
+		Point3DCollection collection)
 	{
-		SetScale(coordinates);
+		ArgumentNullException.ThrowIfNull(collection);
+		ArgumentNullException.ThrowIfNull(coordinateRepository.Coordinates);
 
-		foreach (var coord in coordinates)
+		var centrePoint = SetParameters(coordinateRepository.Coordinates);
+
+		collection.Clear();
+		foreach (var coord in coordinateRepository.Coordinates)
 		{
-			AddSphere(geometry, new Point3D(coord.X, coord.Y, coord.Y), 5, 8, 8);
+			collection.Add(new Point3D(coord.X, coord.Y, coord.Z));
 		}
+
+		return centrePoint;
 	}
 
-	private void SetScale(
+	private Point3D SetParameters(
 		IReadOnlyCollection<Coordinate> coordinates)
 	{
 		_xMax = _zMax = -double.MaxValue;
 		_xMin = _zMin = double.MaxValue;
 
+		var sumX = 0d;
+		var sumY = 0d;
+		var sumZ = 0d;
 		foreach (var coordinate in coordinates)
 		{
 			if (coordinate.X < _xMin) _xMin = coordinate.X;
@@ -48,10 +58,16 @@ public class SphereDrawingService : ISphereDrawingService
 
 			if (coordinate.Z < _zMin) _zMin = coordinate.Z;
 			if (coordinate.Z > _zMax) _zMax = coordinate.Z;
+
+			sumX += coordinate.X;
+			sumY += coordinate.Y;
+			sumZ += coordinate.Z;
 		}
 
 		_textureXScale = _xMax - _xMin;
 		_textureZScale = _zMax - _zMin;
+
+		return new Point3D(sumX / coordinates.Count, sumY / coordinates.Count, sumZ / coordinates.Count);
 	}
 
 	/// <summary>
@@ -73,11 +89,10 @@ public class SphereDrawingService : ISphereDrawingService
 		int numPhi,
 		int numTheta)
 	{
-		double phi0, theta0;
 		var dphi = Math.PI / numPhi;
 		var dtheta = 2 * Math.PI / numTheta;
 
-		phi0 = 0;
+		var phi0 = 0d;
 		var y0 = radius * Math.Cos(phi0);
 		var r0 = radius * Math.Sin(phi0);
 		for (var i = 0; i < numPhi; i++)
@@ -89,7 +104,7 @@ public class SphereDrawingService : ISphereDrawingService
 			// Point ptAB has phi value A and theta value B.
 			// For example, pt01 has phi = phi0 and theta = theta1.
 			// Find the points with theta = theta0.
-			theta0 = 0;
+			var theta0 = 0d;
 			var pt00 = new Point3D(
 				center.X + r0 * Math.Cos(theta0),
 				center.Y + y0,

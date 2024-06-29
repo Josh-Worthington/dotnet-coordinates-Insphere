@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Media3D;
 using CoordinateReader;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
@@ -21,6 +20,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 {
 	private readonly ILogger<MainWindowViewModel> _logger;
 	private readonly ICoordinateReaderService _coordinateReaderService;
+	private readonly ICoordinateRepository _coordinateRepository;
 
 	/// <summary>
 	/// 	Constructor.
@@ -28,23 +28,23 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 	/// <exception cref="ArgumentNullException">	Thrown when one or more required arguments are null. </exception>
 	/// <param name="logger">				  	The logger. </param>
 	/// <param name="coordinateReaderService">	The coordinate reader service. </param>
-	/// <param name="sphereDrawingService">   	The sphere drawing service. </param>
+	/// <param name="coordinateRepository">   	The coordinate repository. </param>
+	/// <param name="display3DViewModel">	  	The display 3D view model. </param>
 	public MainWindowViewModel(
 		ILogger<MainWindowViewModel> logger,
 		ICoordinateReaderService coordinateReaderService,
-		ISphereDrawingService sphereDrawingService) : base(logger)
+		ICoordinateRepository coordinateRepository,
+		IDisplay3DViewModel display3DViewModel) : base(logger)
 	{
 		_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		_coordinateReaderService = coordinateReaderService ?? throw new ArgumentNullException(nameof(coordinateReaderService));
+		_coordinateRepository = coordinateRepository ?? throw new ArgumentNullException(nameof(coordinateRepository));
+		Display3DViewModel = display3DViewModel ?? throw new ArgumentNullException(nameof(display3DViewModel));
 
 		SelectFileCommand = new RelayCommand(SelectFile);
-		DrawSpheresCommand = new RelayCommand(DrawSpheres);
 		RetrieveCoordinatesCommand = new RelayCommandAsync(RetrieveCoordinates, () => FilePath is not null);
 
-		Geometry = new MeshGeometry3D();
-
 		logger.LogInformation("Main Window View Model loaded");
-
 		return;
 
 		void SelectFile()
@@ -61,16 +61,12 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 
 		async Task RetrieveCoordinates()
 		{
-			IsSuccessful = (await _coordinateReaderService.GetCoordinatesAsync(FilePath!))
+			(await _coordinateReaderService.GetCoordinatesAsync(FilePath!))
 				.BiMap(
 					coordinates => new ReadOnlyObservableCollection<Coordinate>(new ObservableCollection<Coordinate>(coordinates)),
 					ex => ex.Status)
-				.Match(
-					coordinates =>
-					{
-						Coordinates = coordinates;
-						return true;
-					},
+				.BiIter(
+					coordinates => Coordinates = coordinates,
 					status =>
 					{
 						var errorMessage = status.StatusCode switch
@@ -79,33 +75,24 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 							_ => $"Failed to retrieve the coordinates. The server returned this error:\r\n\r\n{status.Detail}"
 						};
 						MessageBox.Show(errorMessage, "Coordinate Viewer", MessageBoxButton.OK, MessageBoxImage.Error);
-						return false;
 					});
 
 			_logger.LogInformation("Retrieved coordinates");
 		}
-
-		void DrawSpheres()
-		{
-			sphereDrawingService.DrawSpheresAtCoordinates(Geometry, Coordinates);
-			RaisePropertyChanged(nameof(Geometry));
-		}
 	}
 
 	/// <inheritdoc/>
-	public ICommand SelectFileCommand { get; }
+	public IDisplay3DViewModel Display3DViewModel { get; }
 
 	/// <inheritdoc/>
-	public ICommand DrawSpheresCommand { get; }
-
-	/// <inheritdoc/>
-	public ICommand RetrieveCoordinatesCommand { get; }
-
-	/// <inheritdoc/>
-	public ReadOnlyObservableCollection<Coordinate> Coordinates
+	public ReadOnlyObservableCollection<Coordinate>? Coordinates
 	{
-		get => GetValue<ReadOnlyObservableCollection<Coordinate>>();
-		private set => SetValue(value);
+		get => _coordinateRepository.Coordinates;
+		private set
+		{
+			_coordinateRepository.Coordinates = value;
+			RaisePropertyChanged();
+		}
 	}
 
 	/// <inheritdoc/>
@@ -116,16 +103,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 	}
 
 	/// <inheritdoc/>
-	public MeshGeometry3D Geometry
-	{
-		get => GetValue<MeshGeometry3D>();
-		private init => SetValue(value);
-	}
+	public ICommand SelectFileCommand { get; }
 
-
-	public bool IsSuccessful
-	{
-		get => GetValue<bool>();
-		private set => SetValue(value);
-	}
+	/// <inheritdoc/>
+	public ICommand RetrieveCoordinatesCommand { get; }
 }

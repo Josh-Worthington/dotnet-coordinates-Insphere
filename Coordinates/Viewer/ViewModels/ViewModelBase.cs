@@ -84,11 +84,23 @@ public abstract class ViewModelBase(
 	/// <summary>
 	/// 	Raises the property changed event, to notify the view about changes to properties.
 	/// </summary>
-	/// <param name="propertyName">	(Optional) Name of the property used to notify listeners.  This value is optional and can be provided automatically when invoked from compilers that support CallerMemberName. </param>
+	/// <param name="propertyName">	(Optional) Name of the property used to notify listeners. This value is optional and can be provided automatically when invoked from compilers that support CallerMemberName. </param>
 	protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
 	{
 		ArgumentNullException.ThrowIfNull(propertyName);
 
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	/// <summary>
+	/// 	Raises the property changed event, to notify the view about changes to properties.
+	/// </summary>
+	/// <param name="propertyNames">	Name of the properties used to notify listeners. </param>
+	protected void RaisePropertiesChanged(params string[] propertyNames)
+	{
+		foreach (var propertyName in propertyNames)
+		{
+			RaisePropertyChanged(propertyName);
+		}
 	}
 }
