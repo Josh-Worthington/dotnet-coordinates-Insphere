@@ -39,6 +39,17 @@ public abstract record Either<TLeft, TRight>
 		Func<TRight, TRightOut> map);
 
 	/// <summary>
+	/// 	Map an Either's Right value to a new type, depending on what state it is in.
+	/// </summary>
+	/// <typeparam name="TLeftOut">		The type to map Left to. </typeparam>
+	/// <param name="mapLeft">	The function that maps the Left value. </param>
+	/// <returns>
+	/// 	A Either with Right mapped to a new type.
+	/// </returns>
+	public abstract Either<TLeftOut, TRight> MapLeft<TLeftOut>(
+		Func<TLeft, TLeftOut> mapLeft);
+
+	/// <summary>
 	/// 	Maps an Either's Left or Right value, depending on what state it is in.
 	/// </summary>
 	/// <typeparam name="TLeftOut"> 	The type to map Left to. </typeparam>
@@ -91,6 +102,10 @@ public abstract record Either<TLeft, TRight>
 			Func<TRight, TRightOut> map) => new Either<TLeft, TRightOut>.Left(Value);
 
 		/// <inheritdoc/>
+		public override Either<TLeftOut, TRight> MapLeft<TLeftOut>(
+			Func<TLeft, TLeftOut> mapLeft) => mapLeft(Value);
+
+		/// <inheritdoc/>
 		public override Either<TLeftOut, TRightOut> BiMap<TLeftOut, TRightOut>(
 			Func<TRight, TRightOut> map,
 			Func<TLeft, TLeftOut> mapLeft) => mapLeft(Value);
@@ -114,6 +129,10 @@ public abstract record Either<TLeft, TRight>
 		/// <inheritdoc/>
 		public override Either<TLeft, TRightOut> Map<TRightOut>(
 			Func<TRight, TRightOut> map) => map(Value);
+
+		/// <inheritdoc/>
+		public override Either<TLeftOut, TRight> MapLeft<TLeftOut>(
+			Func<TLeft, TLeftOut> mapLeft) => new Either<TLeftOut, TRight>.Right(Value);
 
 		/// <inheritdoc/>
 		public override Either<TLeftOut, TRightOut> BiMap<TLeftOut, TRightOut>(

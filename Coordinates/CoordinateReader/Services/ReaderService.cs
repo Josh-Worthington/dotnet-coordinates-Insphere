@@ -1,7 +1,7 @@
 using CoordinateReader.Interfaces.Services;
 using Grpc.Core;
 
-namespace CoordinateReader.GrpuServices;
+namespace CoordinateReader.Services;
 
 /// <summary>
 /// 	A service for accessing readers information.
@@ -14,8 +14,9 @@ public class ReaderService(
 	/// <summary>
 	///		Reads coordinates for the path with given id, from CSV at given filepath.
 	/// </summary>
-	/// <param name="request">The read path request.</param>
-	/// <param name="context">The server call context.</param>
+	/// <param name="request">		The read path request.</param>
+	/// <param name="coordinates">	The server stream writer to write coordinates.</param>
+	/// <param name="context">		The server call context.</param>
 	public override async Task ReadCoordinates(
 		ReadPath request,
 		IServerStreamWriter<Coordinate> coordinates,

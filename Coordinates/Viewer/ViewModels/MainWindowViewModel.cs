@@ -32,6 +32,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 	/// <param name="display3DViewModel">	  	The display 3D view model. </param>
 	public MainWindowViewModel(
 		ILogger<MainWindowViewModel> logger,
+		IServerConnectionService serverConnectionService,
 		ICoordinateReaderService coordinateReaderService,
 		ICoordinateRepository coordinateRepository,
 		IDisplay3DViewModel display3DViewModel) : base(logger)
@@ -41,11 +42,15 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 		_coordinateRepository = coordinateRepository ?? throw new ArgumentNullException(nameof(coordinateRepository));
 		Display3DViewModel = display3DViewModel ?? throw new ArgumentNullException(nameof(display3DViewModel));
 
+		StatusText = "Server is not currently running. Please enter the port to host the server.";
+
 		SelectFileCommand = new RelayCommand(SelectFile);
 		RetrieveCoordinatesCommand = new RelayCommandAsync(RetrieveCoordinates, () => FilePath is not null);
 
 		logger.LogInformation("Main Window View Model loaded");
 		return;
+
+
 
 		void SelectFile()
 		{
@@ -99,6 +104,12 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 	public string? FilePath
 	{
 		get => GetValue<string?>();
+		private set => SetValue(value);
+	}
+
+	public string StatusText
+	{
+		get => GetValue<string>();
 		private set => SetValue(value);
 	}
 

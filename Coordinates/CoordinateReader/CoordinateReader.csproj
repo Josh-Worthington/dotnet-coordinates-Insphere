@@ -12,13 +12,16 @@
 	  <PackageReference Include="Grpc.Core.Api" Version="2.63.0" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
 
   <ItemGroup>
     <Protobuf Include="..\..\protos\coordinate.proto" GrpcServices="Server">
       <Link>Protos\coordinate.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\..\protos\ping.proto" GrpcServices="Server">
+      <Link>Protos\ping.proto</Link>
     </Protobuf>
   </ItemGroup>
 
