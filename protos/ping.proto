@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option csharp_namespace = "CoordinateReader";
+
+service Ping {
+	rpc SendPing (PingRequest) returns (PingResponse);
+}
+
+message PingRequest{}
+
+message PingResponse {}

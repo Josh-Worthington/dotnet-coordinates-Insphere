@@ -1,0 +1,35 @@
+﻿<Window x:Class="Viewer.Views.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:Viewer.ViewModels"
+        mc:Ignorable="d"
+        Title="Coordinate Viewer" Height="160" Width="320"
+        d:DataContext="{d:DesignInstance viewModels:ConnectionDialogViewModel}">
+    <DockPanel LastChildFill="True"
+               Margin="16">
+        <TextBlock
+            DockPanel.Dock="Top"
+            TextWrapping="Wrap"
+            Text="Please enter a port to either start or connect to the server."/>
+        <!-- start server -->
+        <StackPanel DockPanel.Dock="Right"
+                    Margin="0 8"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center">
+            <TextBlock 
+                Margin="4 0 0 0" 
+                Text="Enter Port:"/>
+            <TextBox
+                Margin="4 0"
+                Width="80"
+                PreviewTextInput="PortTextChanged"
+                Text="{Binding Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
+            <Button 
+                Margin ="4 0"
+                Content="Start Server"
+                Command="{Binding StartServerCommand}"/>
+        </StackPanel>
+    </DockPanel>
+</Window>

@@ -1,12 +1,15 @@
 ﻿using System.Windows;
 using CoordinateReader;
+using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shared.Extensions;
 using Viewer.Interfaces.Services;
 using Viewer.Interfaces.ViewModels;
 using Viewer.Services;
 using Viewer.ViewModels;
 using Viewer.Views;
+using Application = System.Windows.Application;
 
 namespace Viewer;
 
@@ -16,15 +19,14 @@ namespace Viewer;
 /// <seealso cref="IDisposable"/>
 public sealed class Bootstrapper : IAsyncDisposable
 {
-	private readonly IHost _host;
+	private IHost _host;
 
 	/// <summary>
 	/// 	Default constructor.
 	/// </summary>
 	public Bootstrapper()
 	{
-		var builder = Host.CreateApplicationBuilder();
-		ConfigureServices(builder);
+		var builder = CreateBaseBuilder();
 		_host = builder.Build();
 	}
 
@@ -37,8 +39,30 @@ public sealed class Bootstrapper : IAsyncDisposable
 	{
 		ArgumentNullException.ThrowIfNull(application);
 
-		application.MainWindow = _host.Services.GetService<MainWindow>();
-		application.MainWindow.Show();
+		application.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+		GrpcChannel? connection = null;
+		var connectionService = _host.Services.GetService<IServerConnectionService>();
+		if (connectionService.IsServerRunning() && connectionService.EstablishConnection())
+		{
+			connection = connectionService.Connection;
+		}
+		else
+		{
+			var dialogWindow = _host.Services.GetService<DialogWindow>()!;
+
+			if (dialogWindow.ShowDialog() is true)
+			{
+				connection = connectionService.Connection;
+			}
+		}
+
+		if (connection is null)
+		{
+			throw new Exception("Failed to connect.");
+		}
+
+		Run(application);
 	}
 
 	/// <inheritdoc/>
@@ -48,23 +72,43 @@ public sealed class Bootstrapper : IAsyncDisposable
 		_host.Dispose();
 	}
 
-	private static void ConfigureServices(IHostApplicationBuilder builder)
+	private void Run(Application application)
 	{
-		// Clients
-		builder.Services.AddGrpcClient<Reader.ReaderClient>(o => o.Address = new Uri("https://localhost:7039"));
+		application.MainWindow = _host.Services.GetService<MainWindow>();
+		application.MainWindow!.Show();
+		application.ShutdownMode = ShutdownMode.OnMainWindowClose;
+	}
 
+	private HostApplicationBuilder CreateBaseBuilder()
+	{
+		var builder = Host.CreateApplicationBuilder();
+		ConfigureServices(builder.Services);
+		builder.Services.AddSharedServices();
+		return builder;
+	}
+
+	private static void ConfigureServices(IServiceCollection services)
+	{
 		// Repositories
-		builder.Services.AddSingleton<ICoordinateRepository, CoordinateRepositorySingleton>();
+		services.AddSingleton<ICoordinateRepository, CoordinateRepositorySingleton>();
+
+		// Clients
+		services.AddSingleton(x => new Ping.PingClient(x.GetRequiredService<IServerConnectionService>().Connection));
+		services.AddSingleton(x => new Reader.ReaderClient(x.GetRequiredService<IServerConnectionService>().Connection));
 
 		// Services
-		builder.Services.AddScoped<ICoordinateReaderService, CoordinateReaderService>();
-		builder.Services.AddScoped<ISphereDrawingService, SphereDrawingService>();
+		services.AddScoped<IPingService, PingService>();
+		services.AddScoped<ICoordinateReaderService, CoordinateReaderService>();
+		services.AddScoped<ISphereDrawingService, SphereDrawingService>();
+		services.AddSingleton<IServerConnectionService, ServerConnectionService>();
 
 		// View models
-		builder.Services.AddScoped<IMainWindowViewModel, MainWindowViewModel>();
-		builder.Services.AddScoped<IDisplay3DViewModel, Display3DViewModel>();
+		services.AddScoped<IMainWindowViewModel, MainWindowViewModel>();
+		services.AddScoped<IConnectionDialogViewModel, ConnectionDialogViewModel>();
+		services.AddScoped<IDisplay3DViewModel, Display3DViewModel>();
 
-		// Main window
-		builder.Services.AddSingleton<MainWindow>();
+		// Windows
+		services.AddSingleton<MainWindow>();
+		services.AddSingleton<DialogWindow>();
 	}
 }

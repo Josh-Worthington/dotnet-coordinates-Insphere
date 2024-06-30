@@ -27,12 +27,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Protobuf Include="..\..\protos\coordinate.proto" GrpcServices="Client">
       <Link>Protos\coordinate.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\..\protos\ping.proto" GrpcServices="Client">
+      <Link>Protos\ping.proto</Link>
     </Protobuf>
   </ItemGroup>
 
