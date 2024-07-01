@@ -1,5 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using CoordinateReader;
+using Viewer.Entities;
 
 namespace Viewer.Interfaces.Services;
 
@@ -9,7 +9,7 @@ namespace Viewer.Interfaces.Services;
 public interface ICoordinateRepository
 {
 	/// <summary>
-	/// 	Gets the coordinates.
+	/// 	Gets or sets the coordinates.
 	/// </summary>
-	ReadOnlyObservableCollection<Coordinate>? Coordinates { get; set; }
+	ReadOnlyObservableCollection<CoordinateEntity>? Coordinates { get; set; }
 }

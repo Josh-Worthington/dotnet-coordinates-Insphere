@@ -17,11 +17,11 @@ public class ConnectionDialogViewModel : ViewModelBase, IConnectionDialogViewMod
 	/// </summary>
 	/// <exception cref="ArgumentNullException">	Thrown when one or more required arguments are null. </exception>
 	/// <param name="logger">				  	The logger. </param>
-	/// <param name="serverConnectionService">	The start server service. </param>
+	/// <param name="connectionService">	The start server service. </param>
 	/// <param name="configurationService">   	The configuration service. </param>
 	public ConnectionDialogViewModel(
 		ILogger<ConnectionDialogViewModel> logger,
-		IServerConnectionService serverConnectionService,
+		IConnectionService connectionService,
 		IConfigurationService configurationService) : base(logger)
 	{
 		_configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
@@ -32,11 +32,11 @@ public class ConnectionDialogViewModel : ViewModelBase, IConnectionDialogViewMod
 
 		void StartServer()
 		{
-			IsConnected = serverConnectionService.StartServer(Port);
+			IsConnected = connectionService.StartServer(Port);
 
 			if (!IsConnected)
 			{
-				var message = MessageBox.Show("Failed to start the server. Would you like to try again?", "Coordinate Viewer", MessageBoxButton.YesNo, MessageBoxImage.Error);
+				var message = MessageBox.Show("Failed to start the server. Would you like to try again?", "CoordinateEntity Viewer", MessageBoxButton.YesNo, MessageBoxImage.Error);
 				if (message is MessageBoxResult.Yes) return;
 			}
 
@@ -57,7 +57,7 @@ public class ConnectionDialogViewModel : ViewModelBase, IConnectionDialogViewMod
 			}
 			else
 			{
-				MessageBox.Show("Port must only contain numbers.", "Coordinate Reader", MessageBoxButton.OK, MessageBoxImage.Warning);
+				MessageBox.Show("Port must only contain numbers.", "CoordinateEntity Reader", MessageBoxButton.OK, MessageBoxImage.Warning);
 			}
 		}
 	}
@@ -68,5 +68,6 @@ public class ConnectionDialogViewModel : ViewModelBase, IConnectionDialogViewMod
 	/// <inheritdoc/>
 	public ICommand StartServerCommand { get; }
 
+	/// <inheritdoc/>
 	public Action? Close { get; set; }
 }

@@ -17,39 +17,32 @@ public class Display3DViewModel : ViewModelBase, IDisplay3DViewModel
 	/// <summary>
 	/// 	Constructor.
 	/// </summary>
-	/// <param name="sphereDrawingService">	The sphere drawing service. </param>
 	/// <param name="logger">			   	The logger. </param>
+	/// <param name="coordinateRepository">	The coordinate repository. </param>
+	/// <param name="pointMathService">		   	The point service. </param>
 	public Display3DViewModel(
-		ISphereDrawingService sphereDrawingService,
-		ILogger<Display3DViewModel> logger) : base(logger)
+		ILogger<Display3DViewModel> logger,
+		ICoordinateRepository coordinateRepository,
+		IPointMathService pointMathService) : base(logger)
 	{
-		ArgumentNullException.ThrowIfNull(sphereDrawingService);
+		ArgumentNullException.ThrowIfNull(pointMathService);
 
 		Points = new Point3DCollection();
+		CameraLookDirection = default;
 
-		CameraPosition = new Point3D(0, 0, 0);
-		CameraLookDirection = new Vector3D(100, 100, 100);
-
-		RenderCommand = new RelayCommand(DrawSpheres);
+		RenderCommand = new RelayCommand(DrawPoints, () => coordinateRepository.Coordinates?.Count > 0);
 
 		return;
 
-		void DrawSpheres()
+		void DrawPoints()
 		{
-			// Draw spheres around the coordinates; if successful, update the camera to look at the centre of all the points
-			sphereDrawingService.DrawSpheres(Points)
-				.BiIter(
-					centre =>
-					{
-						//CameraPosition = centre;
-						CameraLookDirection = new Vector3D(centre.X, centre.Y, centre.Z);
-					},
-					ex => logger.LogError(ex, "Failed to draw spheres."));
+			// Draw the coordinates as points, then update the camera to look at the centre of all the points to bring it into view
+			Points = new Point3DCollection(coordinateRepository.Coordinates!.Select(x => x.Position));
+			CameraLookDirection = (Vector3D)pointMathService.CalculateCentroid(Points);
 
-			logger.LogInformation("Position: {CameraPosition}", CameraPosition);
+			RaisePropertiesChanged(nameof(Points), nameof(CameraLookDirection));
+
 			logger.LogInformation("Position: {CameraLookDirection}", CameraLookDirection);
-
-			RaisePropertiesChanged(nameof(Points), nameof(CameraPosition), nameof(CameraLookDirection));
 		}
 	}
 
@@ -57,14 +50,7 @@ public class Display3DViewModel : ViewModelBase, IDisplay3DViewModel
 	public Point3DCollection Points
 	{
 		get => GetValue<Point3DCollection>();
-		private init => SetValue(value);
-	}
-
-	/// <inheritdoc/>
-	public Point3D CameraPosition
-	{
-		get => GetValue<Point3D>();
-		set => SetValue(value);
+		private set => SetValue(value);
 	}
 
 	/// <inheritdoc/>

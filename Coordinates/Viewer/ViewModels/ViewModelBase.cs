@@ -71,7 +71,10 @@ public abstract class ViewModelBase(
 
 		if ((Nullable.GetUnderlyingType(typeof(T)) is not null || default(T) is null) && value is null)
 		{
+#pragma warning disable CS8603 // Possible null reference return.
+			// this is fine, if the given type is nullable then we want to allow this to return null
 			return default;
+#pragma warning restore CS8603 // Possible null reference return.
 		}
 		if (value is not T castedValue)
 		{

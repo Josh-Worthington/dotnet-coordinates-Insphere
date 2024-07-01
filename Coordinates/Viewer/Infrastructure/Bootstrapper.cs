@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using CoordinateReader;
 using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,14 +18,16 @@ namespace Viewer;
 /// <seealso cref="IDisposable"/>
 public sealed class Bootstrapper : IAsyncDisposable
 {
-	private IHost _host;
+	private readonly IHost _host;
 
 	/// <summary>
 	/// 	Default constructor.
 	/// </summary>
 	public Bootstrapper()
 	{
-		var builder = CreateBaseBuilder();
+		var builder = Host.CreateApplicationBuilder();
+		ConfigureServices(builder.Services);
+		builder.Services.AddSharedServices();
 		_host = builder.Build();
 	}
 
@@ -42,7 +43,7 @@ public sealed class Bootstrapper : IAsyncDisposable
 		application.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
 		GrpcChannel? connection = null;
-		var connectionService = _host.Services.GetService<IServerConnectionService>();
+		var connectionService = _host.Services.GetService<IConnectionService>();
 		if (connectionService.IsServerRunning() && connectionService.EstablishConnection())
 		{
 			connection = connectionService.Connection;
@@ -79,32 +80,25 @@ public sealed class Bootstrapper : IAsyncDisposable
 		application.ShutdownMode = ShutdownMode.OnMainWindowClose;
 	}
 
-	private HostApplicationBuilder CreateBaseBuilder()
-	{
-		var builder = Host.CreateApplicationBuilder();
-		ConfigureServices(builder.Services);
-		builder.Services.AddSharedServices();
-		return builder;
-	}
-
 	private static void ConfigureServices(IServiceCollection services)
 	{
 		// Repositories
 		services.AddSingleton<ICoordinateRepository, CoordinateRepositorySingleton>();
 
 		// Clients
-		services.AddSingleton(x => new Ping.PingClient(x.GetRequiredService<IServerConnectionService>().Connection));
-		services.AddSingleton(x => new Reader.ReaderClient(x.GetRequiredService<IServerConnectionService>().Connection));
+		services.AddSingleton(x => new Ping.PingClient(x.GetRequiredService<IConnectionService>().Connection));
+		services.AddSingleton(x => new Reader.ReaderClient(x.GetRequiredService<IConnectionService>().Connection));
 
 		// Services
 		services.AddScoped<IPingService, PingService>();
 		services.AddScoped<ICoordinateReaderService, CoordinateReaderService>();
-		services.AddScoped<ISphereDrawingService, SphereDrawingService>();
-		services.AddSingleton<IServerConnectionService, ServerConnectionService>();
+		services.AddScoped<IPointMathService, PointMathService>();
+		services.AddSingleton<IConnectionService, ConnectionService>();
 
 		// View models
 		services.AddScoped<IMainWindowViewModel, MainWindowViewModel>();
 		services.AddScoped<IConnectionDialogViewModel, ConnectionDialogViewModel>();
+		services.AddScoped<ICoordinatesViewModel, CoordinatesViewModel>();
 		services.AddScoped<IDisplay3DViewModel, Display3DViewModel>();
 
 		// Windows

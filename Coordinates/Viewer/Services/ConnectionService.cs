@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using CoordinateReader;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 using Shared.Interfaces;
@@ -10,15 +9,15 @@ namespace Viewer.Services;
 /// <summary>
 /// 	A service for starting the server.
 /// </summary>
-/// <seealso cref="IServerConnectionService"/>
-public class ServerConnectionService(
-	ILogger<ServerConnectionService> logger,
-	IConfigurationService configurationService) : IServerConnectionService
+/// <seealso cref="IConnectionService"/>
+public class ConnectionService(
+	ILogger<ConnectionService> logger,
+	IConfigurationService configurationService) : IConnectionService
 {
 #if DEBUG
 	private const string ExePath = @"C:\Users\Josh.Worthington\Personal\Work\dotnet-coordinates-Insphere\Coordinates\CoordinateReader\bin\Debug\net8.0\CoordinateReader.exe";
 #else
-	private const string ExePath = @".\Server\CoordinateReader.exe";
+	private const string ExePath = @".\CoordinateReader.exe";
 #endif
 
 	/// <inheritdoc/>

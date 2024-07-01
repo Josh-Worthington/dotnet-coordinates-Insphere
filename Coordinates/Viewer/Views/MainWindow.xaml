@@ -4,98 +4,98 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:Viewer.ViewModels"
-        xmlns:views="clr-namespace:Viewer.Views"
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Background="Violet"
-        Title="MainWindow" Height="450" Width="800">
+        Title="CoordinateEntity Viewer" Height="640" Width="860">
     <Window.Resources>
         <ResourceDictionary>
-            <Style TargetType="Button">
-                <Setter Property="Background" Value="BlueViolet"/>
-                <Setter Property="Height" Value="40"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="Container"
-                                    Background="{TemplateBinding Background}"
-                                    BorderThickness="0"
-                                    CornerRadius="20"
-                                    Cursor="Hand">
-                                <TextBlock
-                                    Margin="16 12"
-                                    Foreground="White"
-                                    Text="{TemplateBinding Content}"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Background" Value="DimGray"/>
-                                    <Setter TargetName="Container" Property="Cursor" Value="No"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="CoordinateTableTemplate.xaml"/>
                 <ResourceDictionary Source="Display3DTemplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid Margin="16 12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Top"
+                    Margin="16 12">
             <TextBlock
                 Text="Select file to retrieve coordinates from:"
                 FontSize="16"/>
 
-            <Grid Margin="0 16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
+            <DockPanel Margin="0 16"
+                       LastChildFill="True">
+                <!-- File select button -->
+                <Button
+                    DockPanel.Dock="Right"
+                    Margin="16 0 0 0"
+                    Content="Select"
+                    Command="{Binding SelectFileCommand, Mode=OneTime}"/>
                 <!-- Display selected file path -->
                 <TextBox
-                    Grid.Column="0"
                     Cursor="No"
                     IsReadOnly="True"
-                    Height="32"
+                    Height="24"
                     VerticalAlignment="Center"
                     Text="{Binding FilePath, Mode=OneWay}"
                     TextBlock.FontSize="12"/>
-
-                <!-- File select button -->
-                <Button Grid.Column="1"
-                        Margin="8 0 0 0"
-                        Content="Select"
-                        Command="{Binding SelectFileCommand, Mode=OneTime}"/>
-            </Grid>
+            </DockPanel>
             
-            <!-- Retrieve the coordinates -->
-            <Button
-                HorizontalAlignment="Right"
-                Content="Retrieve Coordinates"
-                Command="{Binding RetrieveCoordinatesCommand, Mode=OneTime}"/>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <TextBlock 
+                    VerticalAlignment="Center"
+                    Text="Enter the path ID to search for:"/>
+                <!-- Display selected file path -->
+                <TextBox
+                    Margin="16 0"
+                    Height="24"
+                    Width="100"
+                    VerticalAlignment="Center"
+                    Text="{Binding PathId, Mode=TwoWay}"
+                    TextBlock.FontSize="12"/>
+                <!-- Retrieve the coordinates -->
+                <Button
+                    HorizontalAlignment="Right"
+                    Content="Retrieve Coordinates"
+                    Command="{Binding RetrieveCoordinatesCommand, Mode=OneTime}"/>
+            </StackPanel>
         </StackPanel>
-        <TabControl Grid.Row="1">
-            <TabItem Header="Table">
-                <TabItem.Content>
-                    <DataGrid
-                        RowBackground="AliceBlue"
-                        AlternatingRowBackground="LightBlue"
-                        ItemsSource="{Binding Coordinates}"/>
-                </TabItem.Content>
-            </TabItem>
-            <TabItem Header="Model">
-                <TabItem.Content>
-                    <views:UserControl1 DataContext="{Binding Display3DViewModel}"/>
-                </TabItem.Content>
-            </TabItem>
+        <TabControl>
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border Name="Panel"
+                                        Height="24"
+                                        CornerRadius="8 8 0 0">
+                                    <ContentPresenter
+                                        x:Name="ContentSite"
+                                        Margin="16 4 16 4"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Panel" Property="Background" Value="LightSkyBlue" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Panel" Property="Background" Value="White" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+            <TabItem
+                Header="Table"
+                Content="{Binding CoordinatesViewModel}"/>
+            <TabItem
+                Header="Model"
+                Content="{Binding Display3DViewModel}"/>
         </TabControl>
-    </Grid>
+    </DockPanel>
 </Window>

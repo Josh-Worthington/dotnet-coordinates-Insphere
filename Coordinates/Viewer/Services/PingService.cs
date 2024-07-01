@@ -1,5 +1,4 @@
-﻿using CoordinateReader;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Viewer.Interfaces.Services;
 
 namespace Viewer.Services;

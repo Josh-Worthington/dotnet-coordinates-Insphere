@@ -27,22 +27,28 @@ public class ReaderService(
 
 		while (!csvReaderService.Completed)
 		{
-			var result = csvReaderService.ReadPath(request.Id);
-			if (result.IsSuccess)
+			Coordinate? coord = null;
+
+			var shouldContinue = csvReaderService.ReadPath(request.Id)
+				.Match(result =>
+					{
+						coord = result;
+						return true;
+					},
+					error =>
+					{
+						// if we haven't completed the read, or the id is not correct, we continue the read
+						if (error == CsvReaderService.WrongPathString) return true;
+						if (csvReaderService.Completed) return true;
+						logger.LogError("Failed to read path from CSV, message: {Message}", error);
+						return false;
+					});
+			if (!shouldContinue) break;
+
+			// else if we have a coordinate, we write it to the stream
+			if (coord is not null)
 			{
-				await coordinates.WriteAsync(result.Value);
-			}
-			else
-			{
-				if (csvReaderService.Completed)
-				{
-					logger.LogInformation("Finished reading CSV {Name}", Path.GetFileName(request.FilePath));
-				}
-				else
-				{
-					logger.LogError("Failed to read path from CSV, message: {Message}", result.ErrorString);
-					break;
-				}
+				await coordinates.WriteAsync(coord);
 			}
 		}
 	}
