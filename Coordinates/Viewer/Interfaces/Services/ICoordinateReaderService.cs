@@ -1,6 +1,6 @@
-﻿using CoordinateReader;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Viewer.Common;
+using Viewer.Entities;
 
 namespace Viewer.Interfaces.Services;
 

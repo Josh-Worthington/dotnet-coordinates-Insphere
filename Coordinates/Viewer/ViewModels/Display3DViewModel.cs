@@ -19,13 +19,13 @@ public class Display3DViewModel : ViewModelBase, IDisplay3DViewModel
 	/// </summary>
 	/// <param name="logger">			   	The logger. </param>
 	/// <param name="coordinateRepository">	The coordinate repository. </param>
-	/// <param name="pointService">		   	The point service. </param>
+	/// <param name="pointMathService">		   	The point service. </param>
 	public Display3DViewModel(
 		ILogger<Display3DViewModel> logger,
 		ICoordinateRepository coordinateRepository,
-		IPointService pointService) : base(logger)
+		IPointMathService pointMathService) : base(logger)
 	{
-		ArgumentNullException.ThrowIfNull(pointService);
+		ArgumentNullException.ThrowIfNull(pointMathService);
 
 		Points = new Point3DCollection();
 		CameraLookDirection = default;
@@ -37,8 +37,8 @@ public class Display3DViewModel : ViewModelBase, IDisplay3DViewModel
 		void DrawPoints()
 		{
 			// Draw the coordinates as points, then update the camera to look at the centre of all the points to bring it into view
-			Points = pointService.GetPoints(coordinateRepository.Coordinates!);
-			CameraLookDirection = (Vector3D)pointService.CalculateCentroid(Points);
+			Points = (Point3DCollection)coordinateRepository.Coordinates!.Select(x => x.Position);
+			CameraLookDirection = (Vector3D)pointMathService.CalculateCentroid(Points);
 
 			RaisePropertiesChanged(nameof(Points), nameof(CameraLookDirection));
 

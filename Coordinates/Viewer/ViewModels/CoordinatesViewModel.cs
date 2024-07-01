@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
-using CoordinateReader;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using Viewer.Entities;
 using Viewer.Interfaces.Services;
 using Viewer.Interfaces.ViewModels;
 

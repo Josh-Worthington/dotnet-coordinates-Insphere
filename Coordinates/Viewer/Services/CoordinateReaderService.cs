@@ -1,9 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Media.Media3D;
 using CoordinateReader;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Viewer.Common;
 using Viewer.Interfaces.Services;
+using Coordinate = Viewer.Entities.Coordinate;
 
 namespace Viewer.Services;
 
@@ -11,8 +13,8 @@ namespace Viewer.Services;
 /// 	A service for reading coordinates from the gRPC server.
 /// </summary>
 public class CoordinateReaderService(
-	Reader.ReaderClient client,
-	ILogger<CoordinateReaderService> logger) : ICoordinateReaderService
+	ILogger<CoordinateReaderService> logger,
+	Reader.ReaderClient client) : ICoordinateReaderService
 {
 	/// <inheritdoc/>
 	public async Task<Either<RpcException, IReadOnlyCollection<Coordinate>>> GetCoordinatesAsync(
@@ -25,7 +27,12 @@ public class CoordinateReaderService(
 		{
 			while (await call.ResponseStream.MoveNext(CancellationToken.None))
 			{
-				coordinates.Add(call.ResponseStream.Current);
+				var coordinate = call.ResponseStream.Current;
+				coordinates.Add(new Coordinate
+				{
+					Position = new Point3D(coordinate.X, coordinate.Y, coordinate.Z),
+					Rotation = new Vector3D(coordinate.Rx, coordinate.Ry, coordinate.Rz)
+				});
 			}
 		}
 		catch (RpcException ex)

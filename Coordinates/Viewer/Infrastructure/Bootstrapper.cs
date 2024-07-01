@@ -93,7 +93,7 @@ public sealed class Bootstrapper : IAsyncDisposable
 		// Services
 		services.AddScoped<IPingService, PingService>();
 		services.AddScoped<ICoordinateReaderService, CoordinateReaderService>();
-		services.AddScoped<IPointService, PointService>();
+		services.AddScoped<IPointMathService, PointMathService>();
 		services.AddSingleton<IConnectionService, ConnectionService>();
 
 		// View models

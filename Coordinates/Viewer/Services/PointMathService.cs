@@ -1,6 +1,4 @@
 ﻿using System.Windows.Media.Media3D;
-using CoordinateReader;
-using Viewer.Extensions;
 using Viewer.Interfaces.Services;
 
 namespace Viewer.Services;
@@ -8,18 +6,9 @@ namespace Viewer.Services;
 /// <summary>
 /// 	A service for retrieving points and doing calculations.
 /// </summary>
-/// <seealso cref="IPointService"/>
-public class PointService : IPointService
+/// <seealso cref="IPointMathService"/>
+public class PointMathService : IPointMathService
 {
-	/// <inheritdoc/>
-	public Point3DCollection GetPoints(
-		IEnumerable<Coordinate> coordinates)
-	{
-		ArgumentNullException.ThrowIfNull(coordinates);
-
-		return new Point3DCollection(coordinates.Select(x => x.ToPoint()));
-	}
-
 	/// <inheritdoc/>
 	public Point3D CalculateCentroid(
 		Point3DCollection points)

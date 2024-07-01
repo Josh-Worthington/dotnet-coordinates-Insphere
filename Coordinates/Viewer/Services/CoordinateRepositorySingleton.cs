@@ -1,5 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using CoordinateReader;
+using Viewer.Entities;
 using Viewer.Interfaces.Services;
 
 namespace Viewer.Services;
