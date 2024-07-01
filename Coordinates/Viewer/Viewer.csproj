@@ -21,7 +21,7 @@
     <PackageReference Include="Grpc.Net.Client" Version="2.63.0" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.63.0" />
     <PackageReference Include="Grpc.Tools" Version="2.64.0" />
-    <PackageReference Include="HelixToolkit.Wpf" Version="2.25.0" />
+    <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.25.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
@@ -37,6 +37,11 @@
     <Protobuf Include="..\..\protos\ping.proto" GrpcServices="Client">
       <Link>Protos\ping.proto</Link>
     </Protobuf>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Entities\" />
   </ItemGroup>
 
 </Project>

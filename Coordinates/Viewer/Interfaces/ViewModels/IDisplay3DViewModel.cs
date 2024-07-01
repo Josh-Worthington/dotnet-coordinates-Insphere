@@ -14,11 +14,6 @@ public interface IDisplay3DViewModel
 	Point3DCollection Points { get; }
 
 	/// <summary>
-	/// 	Gets or sets the camera position.
-	/// </summary>
-	Point3D CameraPosition { get; set; }
-
-	/// <summary>
 	/// 	Gets or sets the camera look direction.
 	/// </summary>
 	Vector3D CameraLookDirection { get; set; }

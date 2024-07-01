@@ -1,0 +1,79 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:viewModels="clr-namespace:Viewer.ViewModels">
+
+    <DataTemplate DataType="{x:Type viewModels:CoordinatesViewModel}">
+        <DataTemplate.Resources>
+            <ControlTemplate x:Key="HeaderTemplate"
+                             TargetType="DataGridColumnHeader">
+                <Border Background="Azure"
+                        BorderBrush="Black"
+                        BorderThickness="0 0 1 1">
+                    <TextBlock
+                        Margin="2"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        Text="{TemplateBinding Content}"/>
+                </Border>
+            </ControlTemplate>
+            <Style x:Key="HeaderStyle"
+                   TargetType="DataGridColumnHeader">
+                <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                <Setter Property="Template" Value="{StaticResource HeaderTemplate}"/>
+            </Style>
+        </DataTemplate.Resources>
+        <DataGrid RowBackground="AliceBlue"
+                  AlternatingRowBackground="LightBlue"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding Coordinates}"
+                  ColumnHeaderStyle="{StaticResource HeaderStyle}"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserResizeRows="False"
+                  CanUserResizeColumns="False"
+                  CanUserReorderColumns="False"
+                  HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Index}"
+                                    Header="Index"
+                                    Width="*">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader"
+                               BasedOn="{StaticResource HeaderStyle}">
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="Azure"/>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn
+                    Binding="{Binding X}"
+                    Header="X"
+                    Width="3*"/>
+                <DataGridTextColumn
+                    Binding="{Binding Y}"
+                    Header="Y"
+                    Width="3*"/>
+                <DataGridTextColumn
+                    Binding="{Binding Z}"
+                    Header="Z"
+                    Width="3*"/>
+                <DataGridTextColumn
+                    Binding="{Binding Rx}"
+                    Header="Rx"
+                    Width="3*"/>
+                <DataGridTextColumn
+                    Binding="{Binding Ry}"
+                    Header="Ry"
+                    Width="3*"/>
+                <DataGridTextColumn
+                    Binding="{Binding Rz}"
+                    Header="Rz"
+                    Width="3*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DataTemplate>
+</ResourceDictionary>

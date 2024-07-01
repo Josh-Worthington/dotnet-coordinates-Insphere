@@ -2,7 +2,10 @@
 
 namespace Viewer.Interfaces.Services;
 
-public interface IServerConnectionService
+/// <summary>
+/// 	Interface for connection service.
+/// </summary>
+public interface IConnectionService
 {
 	/// <summary>
 	/// 	Gets the connection.

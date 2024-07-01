@@ -9,7 +9,7 @@ namespace Viewer.Interfaces.Services;
 public interface ICoordinateRepository
 {
 	/// <summary>
-	/// 	Gets the coordinates.
+	/// 	Gets or sets the coordinates.
 	/// </summary>
 	ReadOnlyObservableCollection<Coordinate>? Coordinates { get; set; }
 }

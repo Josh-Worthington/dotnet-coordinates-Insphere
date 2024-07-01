@@ -64,6 +64,13 @@ public abstract record Either<TLeft, TRight>
 		Func<TLeft, TLeftOut> mapLeft);
 
 	/// <summary>
+	/// 	Performs action if the Either is in the Left state.
+	/// </summary>
+	/// <param name="left">	The left. </param>
+	public abstract void IterLeft(
+		Action<TLeft> left);
+
+	/// <summary>
 	/// 	Performs corresponding action depending on the state of the Either.
 	/// </summary>
 	/// <param name="right">	The right action. </param>
@@ -110,6 +117,10 @@ public abstract record Either<TLeft, TRight>
 			Func<TRight, TRightOut> map,
 			Func<TLeft, TLeftOut> mapLeft) => mapLeft(Value);
 
+		/// <inheritdoc/>
+		public override void IterLeft(
+			Action<TLeft> left) => left(Value);
+
 		public override void BiIter(
 			Action<TRight> right,
 			Action<TLeft> left) => left(Value);
@@ -138,6 +149,11 @@ public abstract record Either<TLeft, TRight>
 		public override Either<TLeftOut, TRightOut> BiMap<TLeftOut, TRightOut>(
 			Func<TRight, TRightOut> map,
 			Func<TLeft, TLeftOut> mapLeft) => map(Value);
+
+		/// <inheritdoc/>
+		public override void IterLeft(
+			Action<TLeft> left)
+		{ }
 
 		public override void BiIter(
 			Action<TRight> right,

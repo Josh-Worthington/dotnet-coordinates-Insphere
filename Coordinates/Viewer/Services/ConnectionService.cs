@@ -10,10 +10,10 @@ namespace Viewer.Services;
 /// <summary>
 /// 	A service for starting the server.
 /// </summary>
-/// <seealso cref="IServerConnectionService"/>
-public class ServerConnectionService(
-	ILogger<ServerConnectionService> logger,
-	IConfigurationService configurationService) : IServerConnectionService
+/// <seealso cref="IConnectionService"/>
+public class ConnectionService(
+	ILogger<ConnectionService> logger,
+	IConfigurationService configurationService) : IConnectionService
 {
 #if DEBUG
 	private const string ExePath = @"C:\Users\Josh.Worthington\Personal\Work\dotnet-coordinates-Insphere\Coordinates\CoordinateReader\bin\Debug\net8.0\CoordinateReader.exe";

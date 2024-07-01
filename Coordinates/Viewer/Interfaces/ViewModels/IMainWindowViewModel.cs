@@ -1,20 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
-using CoordinateReader;
+﻿using System.Windows.Input;
 
 namespace Viewer.Interfaces.ViewModels;
 
 public interface IMainWindowViewModel
 {
 	/// <summary>
+	/// 	Gets the coordinates view model.
+	/// </summary>
+	ICoordinatesViewModel CoordinatesViewModel { get; }
+
+	/// <summary>
 	/// 	Gets the display 3D view model.
 	/// </summary>
 	IDisplay3DViewModel Display3DViewModel { get; }
-
-	/// <summary>
-	/// 	Gets the coordinates.
-	/// </summary>
-	ReadOnlyObservableCollection<Coordinate>? Coordinates { get; }
 
 	/// <summary>
 	/// 	Gets the full pathname of the file.
