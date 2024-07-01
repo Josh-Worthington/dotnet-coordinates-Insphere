@@ -31,7 +31,8 @@ public class CoordinatesViewModel(
 
 	/// <inheritdoc />
 	public async Task ReadCoordinates(
-		string filePath) => (await coordinateReaderService.GetCoordinatesAsync(filePath))
+		string filePath,
+		string pathId) => (await coordinateReaderService.GetCoordinatesAsync(filePath, pathId))
 		.MapLeft(ex => ex.Status)
 		.BiIter(
 			coordinates => Coordinates = new ReadOnlyObservableCollection<Coordinate>(new ObservableCollection<Coordinate>(coordinates)),

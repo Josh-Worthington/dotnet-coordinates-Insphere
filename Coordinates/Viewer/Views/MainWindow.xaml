@@ -7,12 +7,12 @@
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Background="Violet"
-        Title="MainWindow" Height="640" Width="860">
+        Title="Coordinate Viewer" Height="640" Width="860">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Display3DTemplate.xaml"/>
                 <ResourceDictionary Source="CoordinateTableTemplate.xaml"/>
+                <ResourceDictionary Source="Display3DTemplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -35,17 +35,31 @@
                 <TextBox
                     Cursor="No"
                     IsReadOnly="True"
-                    Height="32"
+                    Height="24"
                     VerticalAlignment="Center"
                     Text="{Binding FilePath, Mode=OneWay}"
                     TextBlock.FontSize="12"/>
             </DockPanel>
             
-            <!-- Retrieve the coordinates -->
-            <Button
-                HorizontalAlignment="Right"
-                Content="Retrieve Coordinates"
-                Command="{Binding RetrieveCoordinatesCommand, Mode=OneTime}"/>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <TextBlock 
+                    VerticalAlignment="Center"
+                    Text="Enter the path ID to search for:"/>
+                <!-- Display selected file path -->
+                <TextBox
+                    Margin="16 0"
+                    Height="24"
+                    Width="100"
+                    VerticalAlignment="Center"
+                    Text="{Binding PathId, Mode=TwoWay}"
+                    TextBlock.FontSize="12"/>
+                <!-- Retrieve the coordinates -->
+                <Button
+                    HorizontalAlignment="Right"
+                    Content="Retrieve Coordinates"
+                    Command="{Binding RetrieveCoordinatesCommand, Mode=OneTime}"/>
+            </StackPanel>
         </StackPanel>
         <TabControl>
             <TabControl.Resources>

@@ -18,7 +18,7 @@ public class ConnectionService(
 #if DEBUG
 	private const string ExePath = @"C:\Users\Josh.Worthington\Personal\Work\dotnet-coordinates-Insphere\Coordinates\CoordinateReader\bin\Debug\net8.0\CoordinateReader.exe";
 #else
-	private const string ExePath = @".\Server\CoordinateReader.exe";
+	private const string ExePath = @".\CoordinateReader.exe";
 #endif
 
 	/// <inheritdoc/>

@@ -17,6 +17,8 @@ public interface ICoordinatesViewModel
 	/// 	Reads the coordinates.
 	/// </summary>
 	/// <param name="filePath">	Full pathname of the file. </param>
+	/// <param name="pathId">  	Identifier for the path. </param>
 	Task ReadCoordinates(
-		string filePath);
+		string filePath,
+		string pathId);
 }

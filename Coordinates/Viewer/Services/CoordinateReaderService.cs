@@ -18,9 +18,10 @@ public class CoordinateReaderService(
 {
 	/// <inheritdoc/>
 	public async Task<Either<RpcException, IReadOnlyCollection<Coordinate>>> GetCoordinatesAsync(
-		string filePath)
+		string filePath,
+		string pathId)
 	{
-		using var call = client.ReadCoordinates(new ReadPath { FilePath = filePath, Id = "" });
+		using var call = client.ReadCoordinates(new ReadPath { FilePath = filePath, Id = pathId });
 
 		var coordinates = new List<Coordinate>();
 		try
@@ -30,6 +31,7 @@ public class CoordinateReaderService(
 				var coordinate = call.ResponseStream.Current;
 				coordinates.Add(new Coordinate
 				{
+					Index = coordinate.Index,
 					Position = new Point3D(coordinate.X, coordinate.Y, coordinate.Z),
 					Rotation = new Vector3D(coordinate.Rx, coordinate.Ry, coordinate.Rz)
 				});

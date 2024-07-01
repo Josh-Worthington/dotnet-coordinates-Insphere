@@ -1,4 +1,4 @@
-﻿using CoordinateReader.Interfaces.Entities;
+﻿using Viewer.Common;
 
 namespace CoordinateReader.Interfaces.Services;
 
@@ -21,7 +21,10 @@ public interface ICsvReaderService
 	/// <summary>
 	/// 	Reads the header from the CSV.
 	/// </summary>
-	/// <param name="pathId">	  	Identifier for the path to read. </param>
-	IResult<Coordinate> ReadPath(
+	/// <param name="pathId">	Identifier for the path to read. </param>
+	/// <returns>
+	/// 	Either the current coordinate, or an error string.
+	/// </returns>
+	Either<string, Coordinate> ReadPath(
 		string pathId);
 }

@@ -37,7 +37,7 @@ public class Display3DViewModel : ViewModelBase, IDisplay3DViewModel
 		void DrawPoints()
 		{
 			// Draw the coordinates as points, then update the camera to look at the centre of all the points to bring it into view
-			Points = (Point3DCollection)coordinateRepository.Coordinates!.Select(x => x.Position);
+			Points = new Point3DCollection(coordinateRepository.Coordinates!.Select(x => x.Position));
 			CameraLookDirection = (Vector3D)pointMathService.CalculateCentroid(Points);
 
 			RaisePropertiesChanged(nameof(Points), nameof(CameraLookDirection));

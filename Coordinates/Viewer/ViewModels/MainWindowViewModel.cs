@@ -32,6 +32,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 		CoordinatesViewModel = coordinatesViewModel ?? throw new ArgumentNullException(nameof(coordinatesViewModel));
 		Display3DViewModel = display3DViewModel ?? throw new ArgumentNullException(nameof(display3DViewModel));
 
+		PathId = "Path_2";
+
 		SelectFileCommand = new RelayCommand(SelectFile);
 		RetrieveCoordinatesCommand = new RelayCommandAsync(RetrieveCoordinates, () => FilePath is not null);
 
@@ -52,7 +54,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 
 		async Task RetrieveCoordinates()
 		{
-			await CoordinatesViewModel.ReadCoordinates(FilePath!);
+			await CoordinatesViewModel.ReadCoordinates(FilePath!, PathId);
 
 			_logger.LogInformation("Retrieved coordinates");
 		}
@@ -69,6 +71,13 @@ public sealed class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 	{
 		get => GetValue<string?>();
 		private set => SetValue(value);
+	}
+
+	/// <inheritdoc/>
+	public string PathId
+	{
+		get => GetValue<string>();
+		set => SetValue(value);
 	}
 
 	/// <inheritdoc/>

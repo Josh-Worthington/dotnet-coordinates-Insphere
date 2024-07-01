@@ -50,27 +50,27 @@
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn
-                    Binding="{Binding X}"
+                    Binding="{Binding Position.X}"
                     Header="X"
                     Width="3*"/>
                 <DataGridTextColumn
-                    Binding="{Binding Y}"
+                    Binding="{Binding Position.Y}"
                     Header="Y"
                     Width="3*"/>
                 <DataGridTextColumn
-                    Binding="{Binding Z}"
+                    Binding="{Binding Position.Z}"
                     Header="Z"
                     Width="3*"/>
                 <DataGridTextColumn
-                    Binding="{Binding Rx}"
+                    Binding="{Binding Rotation.X}"
                     Header="Rx"
                     Width="3*"/>
                 <DataGridTextColumn
-                    Binding="{Binding Ry}"
+                    Binding="{Binding Rotation.Y}"
                     Header="Ry"
                     Width="3*"/>
                 <DataGridTextColumn
-                    Binding="{Binding Rz}"
+                    Binding="{Binding Rotation.Z}"
                     Header="Rz"
                     Width="3*"/>
             </DataGrid.Columns>

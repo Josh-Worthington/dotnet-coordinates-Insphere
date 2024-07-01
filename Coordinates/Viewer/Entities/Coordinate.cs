@@ -8,6 +8,11 @@ namespace Viewer.Entities;
 public record Coordinate
 {
 	/// <summary>
+	/// 	Gets the zero-based index of this object.
+	/// </summary>
+	public uint Index { get; init; }
+
+	/// <summary>
 	/// 	Gets or initialises the position.
 	/// </summary>
 	public Point3D Position { get; init; }

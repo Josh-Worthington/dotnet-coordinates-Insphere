@@ -20,6 +20,11 @@ public interface IMainWindowViewModel
 	string? FilePath { get; }
 
 	/// <summary>
+	/// 	Gets or sets the identifier of the path.
+	/// </summary>
+	string PathId { get; set; }
+
+	/// <summary>
 	/// 	Gets the 'select file' command.
 	/// </summary>
 	ICommand SelectFileCommand { get; }

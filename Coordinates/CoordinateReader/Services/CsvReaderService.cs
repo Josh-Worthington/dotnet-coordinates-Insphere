@@ -1,6 +1,5 @@
-﻿using CoordinateReader.Entities;
-using CoordinateReader.Interfaces.Entities;
-using CoordinateReader.Interfaces.Services;
+﻿using CoordinateReader.Interfaces.Services;
+using Viewer.Common;
 
 namespace CoordinateReader.Services;
 
@@ -28,6 +27,11 @@ public sealed class CsvReaderService(
 	private bool _initialised;
 	private StreamReader? _reader;
 
+	/// <summary>
+	/// 	The wrong path string.
+	/// </summary>
+	public static readonly string WrongPathString = "Coordinate has the wrong path id";
+
 	/// <inheritdoc/>
 	public bool Completed { get; private set; }
 
@@ -53,7 +57,7 @@ public sealed class CsvReaderService(
 	}
 
 	/// <inheritdoc/>
-	public IResult<Coordinate> ReadPath(
+	public Either<string, Coordinate> ReadPath(
 		string pathId)
 	{
 		if (!_initialised || _reader is null)
@@ -64,11 +68,16 @@ public sealed class CsvReaderService(
 		if (_reader.ReadLine() is not { } line)
 		{
 			Completed = true;
-			return Result.FromFailure<Coordinate>("Reached the end of the stream.");
+			return "Reached the end of the stream.";
 		}
 
 		var result = ReadCoordinate(line);
-		return Result.FromSuccess(result);
+		if (result.Id != pathId)
+		{
+			return WrongPathString;
+		}
+
+		return result;
 	}
 
 	/// <inheritdoc/>
