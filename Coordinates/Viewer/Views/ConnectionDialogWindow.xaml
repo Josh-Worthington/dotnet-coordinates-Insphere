@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:Viewer.ViewModels"
         mc:Ignorable="d"
-        Title="Coordinate Viewer" Height="160" Width="320"
+        Title="CoordinateEntity Viewer" Height="160" Width="320"
         d:DataContext="{d:DesignInstance viewModels:ConnectionDialogViewModel}">
     <DockPanel LastChildFill="True"
                Margin="16">

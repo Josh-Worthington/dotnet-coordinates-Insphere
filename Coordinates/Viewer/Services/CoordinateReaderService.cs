@@ -1,11 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Media.Media3D;
-using CoordinateReader;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using Viewer.Common;
+using Shared.Entities;
+using Viewer.Entities;
 using Viewer.Interfaces.Services;
-using Coordinate = Viewer.Entities.Coordinate;
 
 namespace Viewer.Services;
 
@@ -17,19 +16,19 @@ public class CoordinateReaderService(
 	Reader.ReaderClient client) : ICoordinateReaderService
 {
 	/// <inheritdoc/>
-	public async Task<Either<RpcException, IReadOnlyCollection<Coordinate>>> GetCoordinatesAsync(
+	public async Task<Either<RpcException, IReadOnlyCollection<CoordinateEntity>>> GetCoordinatesAsync(
 		string filePath,
 		string pathId)
 	{
 		using var call = client.ReadCoordinates(new ReadPath { FilePath = filePath, Id = pathId });
 
-		var coordinates = new List<Coordinate>();
+		var coordinates = new List<CoordinateEntity>();
 		try
 		{
 			while (await call.ResponseStream.MoveNext(CancellationToken.None))
 			{
 				var coordinate = call.ResponseStream.Current;
-				coordinates.Add(new Coordinate
+				coordinates.Add(new CoordinateEntity
 				{
 					Index = coordinate.Index,
 					Position = new Point3D(coordinate.X, coordinate.Y, coordinate.Z),
@@ -43,7 +42,7 @@ public class CoordinateReaderService(
 			return ex;
 		}
 
-		return new ReadOnlyCollection<Coordinate>(coordinates);
+		return new ReadOnlyCollection<CoordinateEntity>(coordinates);
 	}
 }
 

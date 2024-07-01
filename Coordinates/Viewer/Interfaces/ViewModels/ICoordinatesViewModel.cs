@@ -11,7 +11,7 @@ public interface ICoordinatesViewModel
 	/// <summary>
 	/// 	Gets the coordinates.
 	/// </summary>
-	ReadOnlyObservableCollection<Coordinate>? Coordinates { get; }
+	ReadOnlyObservableCollection<CoordinateEntity>? Coordinates { get; }
 
 	/// <summary>
 	/// 	Reads the coordinates.

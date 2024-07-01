@@ -7,7 +7,7 @@
         d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Background="Violet"
-        Title="Coordinate Viewer" Height="640" Width="860">
+        Title="CoordinateEntity Viewer" Height="640" Width="860">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

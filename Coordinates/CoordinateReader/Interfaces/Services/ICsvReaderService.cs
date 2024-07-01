@@ -1,4 +1,4 @@
-﻿using Viewer.Common;
+﻿using Shared.Entities;
 
 namespace CoordinateReader.Interfaces.Services;
 

@@ -11,5 +11,5 @@ namespace Viewer.Services;
 public class CoordinateRepositorySingleton : ICoordinateRepository
 {
 	/// <inheritdoc/>
-	public ReadOnlyObservableCollection<Coordinate>? Coordinates { get; set; }
+	public ReadOnlyObservableCollection<CoordinateEntity>? Coordinates { get; set; }
 }

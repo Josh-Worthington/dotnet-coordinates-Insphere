@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using CoordinateReader;
 using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

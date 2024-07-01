@@ -11,5 +11,5 @@ public interface ICoordinateRepository
 	/// <summary>
 	/// 	Gets or sets the coordinates.
 	/// </summary>
-	ReadOnlyObservableCollection<Coordinate>? Coordinates { get; set; }
+	ReadOnlyObservableCollection<CoordinateEntity>? Coordinates { get; set; }
 }

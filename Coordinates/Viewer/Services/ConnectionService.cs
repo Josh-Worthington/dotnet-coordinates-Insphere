@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using CoordinateReader;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 using Shared.Interfaces;

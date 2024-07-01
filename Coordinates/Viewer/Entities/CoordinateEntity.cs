@@ -5,7 +5,7 @@ namespace Viewer.Entities;
 /// <summary>
 /// 	A coordinate, with a data structure to accommodate the 3D Viewport.
 /// </summary>
-public record Coordinate
+public record CoordinateEntity
 {
 	/// <summary>
 	/// 	Gets the zero-based index of this object.

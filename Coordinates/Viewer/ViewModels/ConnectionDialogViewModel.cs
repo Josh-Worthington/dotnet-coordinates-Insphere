@@ -36,7 +36,7 @@ public class ConnectionDialogViewModel : ViewModelBase, IConnectionDialogViewMod
 
 			if (!IsConnected)
 			{
-				var message = MessageBox.Show("Failed to start the server. Would you like to try again?", "Coordinate Viewer", MessageBoxButton.YesNo, MessageBoxImage.Error);
+				var message = MessageBox.Show("Failed to start the server. Would you like to try again?", "CoordinateEntity Viewer", MessageBoxButton.YesNo, MessageBoxImage.Error);
 				if (message is MessageBoxResult.Yes) return;
 			}
 
@@ -57,7 +57,7 @@ public class ConnectionDialogViewModel : ViewModelBase, IConnectionDialogViewMod
 			}
 			else
 			{
-				MessageBox.Show("Port must only contain numbers.", "Coordinate Reader", MessageBoxButton.OK, MessageBoxImage.Warning);
+				MessageBox.Show("Port must only contain numbers.", "CoordinateEntity Reader", MessageBoxButton.OK, MessageBoxImage.Warning);
 			}
 		}
 	}

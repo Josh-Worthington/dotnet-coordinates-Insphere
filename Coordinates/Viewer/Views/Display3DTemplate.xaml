@@ -13,9 +13,7 @@
                 Content="Render"
                 Command="{Binding RenderCommand}"/>
             <!-- 3D Model Viewport -->
-            <h:HelixViewport3D CameraMode="Inspect"
-                               ShowCameraTarget="True"
-                               ShowCameraInfo="True">
+            <h:HelixViewport3D CameraMode="Inspect">
                 <h:DefaultLights/>
                 <h:PointsVisual3D
                     Points="{Binding Points, Mode=OneWay}"

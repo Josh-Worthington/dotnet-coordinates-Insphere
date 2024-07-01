@@ -19,7 +19,7 @@ public class CoordinatesViewModel(
 	ICoordinateReaderService coordinateReaderService) : ViewModelBase(logger), ICoordinatesViewModel
 {
 	/// <inheritdoc />
-	public ReadOnlyObservableCollection<Coordinate>? Coordinates
+	public ReadOnlyObservableCollection<CoordinateEntity>? Coordinates
 	{
 		get => coordinateRepository.Coordinates;
 		set
@@ -35,7 +35,7 @@ public class CoordinatesViewModel(
 		string pathId) => (await coordinateReaderService.GetCoordinatesAsync(filePath, pathId))
 		.MapLeft(ex => ex.Status)
 		.BiIter(
-			coordinates => Coordinates = new ReadOnlyObservableCollection<Coordinate>(new ObservableCollection<Coordinate>(coordinates)),
+			coordinates => Coordinates = new(new ObservableCollection<CoordinateEntity>(coordinates)),
 			status =>
 			{
 				var errorMessage = status.StatusCode switch
@@ -43,6 +43,6 @@ public class CoordinatesViewModel(
 					StatusCode.Unavailable => "Failed to retrieve the coordinates because the server is unavailable. Ensure it is running and you have set the address correctly.",
 					_ => $"Failed to retrieve the coordinates. The server returned this error:\r\n\r\n{status.Detail}"
 				};
-				MessageBox.Show(errorMessage, "Coordinate Viewer", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show(errorMessage, "CoordinateEntity Viewer", MessageBoxButton.OK, MessageBoxImage.Error);
 			});
 }

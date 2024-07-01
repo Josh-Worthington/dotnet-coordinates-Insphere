@@ -1,5 +1,5 @@
 ﻿using CoordinateReader.Interfaces.Services;
-using Viewer.Common;
+using Shared.Entities;
 
 namespace CoordinateReader.Services;
 

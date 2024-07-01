@@ -1,4 +1,4 @@
-﻿namespace Viewer.Common;
+﻿namespace Shared.Entities;
 
 /// <summary>
 /// 	An either, for result handling in a functional way.
